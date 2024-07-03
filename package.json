@@ -2,10 +2,8 @@
   "name": "haiku",
   "version": "1.0.0",
   "description": "Set of cli tools to aid in the creation of poems",
-  "main": "app.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "main": "src/cli.js",
+	"bin": "src/cli.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/SharkAce/haiku.git"
