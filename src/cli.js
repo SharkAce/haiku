@@ -3,14 +3,14 @@
 const { findRhymes, syllableCount } = require('./Algorithms.js');
 const fs = require('fs');
 const path = require('path');
-const CG = require("console-grid");
+const CG = require('console-grid');
 const { Command } = require('commander');
 
-const cli = new Command('haiku');
+const cli = new Command("haiku");
 
 cli.description("Set of cli tools to aid in the creation of poems");
 
-const defaultDictionaryPath = path.join(__dirname, '../dictionary.txt');
+const defaultDictionaryPath = path.join(__dirname, "../dictionary.txt");
 cli.command("find-rhymes")
 	.description("Finds words that ryhmes with the input words")
 	.argument("<WORD...>", "Words to find ryhmes for")
@@ -59,7 +59,7 @@ function syllableCountAction(args) {
 		columns.push({ "name": `Text ${i+1}`, "align": "center" });
 	}
 
-	let rows = [ ["Syllabes:"] ];
+	let rows = [ ["Syllables:"] ];
 	args.forEach((text) => {
 		rows[0].push(syllableCount(text));
 	});
