@@ -69,7 +69,7 @@ function findRhymes(input_word, output_amount, word_list) {
 			}
 		}
 
-    // If all the checks pass, re-enqueue the current word
+		// If the word passes all checks, re-enqueue it
     matching_words.push(current_word);
   }
 
