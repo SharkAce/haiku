@@ -15,7 +15,7 @@ cli.name("haiku");
 cli.description("Set of cli tools to aid in the creation of poems");
 
 // Implement the findRhymes algorithm inside a sub-command of haiku
-cli.command("find-rhymes")
+cli.command("rhyme")
 	.description("Search for words that rhyme with the given input words")
 	.argument("<WORD...>", "Words to find ryhmes for")
 	.option("-n --num <NUM>", "Specify the desired number of matches", 5)
@@ -49,7 +49,7 @@ cli.command("find-rhymes")
 	});
 
 // Implement the countSyllables algorithm inside a sub-command of haiku
-cli.command("count-syllables")
+cli.command("count")
 	.description("Counts the number of syllables in a text")
 	.argument("<TEXT...>", "The texts to count syllables on")
 	.action((args) => {
