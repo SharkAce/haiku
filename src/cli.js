@@ -18,9 +18,9 @@ cli.description("Set of cli tools to aid in the creation of poems");
 cli.command("rhyme")
 	.description("Search for words that rhyme with the given input words")
 	.argument("<WORD...>", "Words to find ryhmes for")
-	.option("-n --num <NUM>", "Specify the desired number of matches", 5)
-	.option("-w --word-list <FILE>", "Specify the dictionary file path", defaultWordListPath)
-	.option("-s --no-shuffle", "Do not randomize the dictionary")
+	.option("-n, --num <NUM>", "Specify the desired number of matches", 5)
+	.option("-w, --word-list <FILE>", "Specify the dictionary file path", defaultWordListPath)
+	.option("-s, --no-shuffle", "Do not randomize the dictionary")
 	.action((args, options) => {
 
 		// Initialize the word_list array
