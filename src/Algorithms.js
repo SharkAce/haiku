@@ -1,22 +1,16 @@
-/**
- * Finds rhyming words from a dictionary.
- * @param {string} input_word - The word to find rhymes for.
- * @param {number} output_amount - The number of rhyming words to return.
- * @param {Array<string>} dictionary - The dictionary of words to search through.
- * @returns {Array<string>} - A list of rhyming words.
- */
-function findRhymes(input_word, output_amount, dictionary) {
+function findRhymes(input_word, output_amount, word_list) {
   // Create a queue to store matching words
   let matching_words = new Array();
+  const vowels = "aeiouyAEIOUY".split(''); // Initialize the vowels
 
-  // Enqueue all words from the dictionary into the matching words queue
-  matching_words = [...dictionary];
+  // Enqueue all words from the word_list into the matching words queue
+  matching_words = [...word_list];
   // Add a marker to indicate the end of the queue
   matching_words.push("__END_OF_QUEUE__");
   // Iterator to track the position of characters in words
   let character_iterator = 0;
   // Track the size of the matching words queue
-  let matching_words_size = dictionary.length;
+  let matching_words_size = word_list.length;
 
   // Loop until the desired number of matching words is reached
   while (matching_words_size > output_amount) {
@@ -37,7 +31,13 @@ function findRhymes(input_word, output_amount, dictionary) {
       continue;
     }
 
-    // If the current word is shorter than the character iterator, skip it
+		// If the current word is the same as the input word, discrad it
+		if (current_word == input_word) {
+      matching_words_size--;
+      continue;
+		}
+
+    // If the current word is shorter than the character iterator, discard it
     if (character_iterator >= current_word.length) {
       matching_words_size--;
       continue;
@@ -47,13 +47,29 @@ function findRhymes(input_word, output_amount, dictionary) {
     let input_index = (input_word.length - 1) - character_iterator;
     let current_index = (current_word.length - 1) - character_iterator;
 
-    // If the characters do not match, decrement the matching words size
+    // If the characters do not match, discard the current word
     if (input_word[input_index] != current_word[current_index]) {
       matching_words_size--;
       continue;
     }
+		
+		// If the previous character of the current word is a vowel, we also check it
+		// This is to discard syllables that don't match
+		if (input_index > 0 && current_index > 0) {
+			let next_is_vowel = false;
+			for (let i = 0; i < vowels.length; i++) {
+				if (current_word[current_index - 1] == vowels[i]) {
+					next_is_vowel = true;
+					break;
+				}
+			}
+			if (next_is_vowel && input_word[input_index - 1] != current_word[current_index -1 ]) {
+      	matching_words_size--;
+      	continue;
+			}
+		}
 
-    // If the characters match, re-enqueue the current word
+    // If all the checks pass, re-enqueue the current word
     matching_words.push(current_word);
   }
 
@@ -67,11 +83,6 @@ function findRhymes(input_word, output_amount, dictionary) {
   return matching_words; // Return the queue of matching words
 }
 
-/**
- * Finds amount of syllables in a text.
- * @param {string} text - The text to count syllables on.
- * @returns {int} - The amount of syllables in the text.
- */
 function syllableCount(text) {
   const vowels = "aeiouyAEIOUY".split(''); // Initialize the vowels
   let counter = 0; // Initialize the counter for syllables

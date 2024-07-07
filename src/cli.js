@@ -3,70 +3,74 @@
 const { findRhymes, syllableCount } = require('./Algorithms.js');
 const fs = require('fs');
 const path = require('path');
-const CG = require('console-grid');
+const consoleGrid = require('console-grid');
+const shuffle = require('shuffle-array');
 const { Command } = require('commander');
 
-const cli = new Command("haiku");
+const defaultWordListPath = path.join(__dirname, "../wordlist.txt");
+const cli = new Command();
 
+// Set metadata for the automated help options
+cli.name("haiku");
 cli.description("Set of cli tools to aid in the creation of poems");
 
-const defaultDictionaryPath = path.join(__dirname, "../dictionary.txt");
+// Implement the findRhymes algorithm inside a sub-command of haiku
 cli.command("find-rhymes")
-	.description("Finds words that ryhmes with the input words")
+	.description("Search for words that rhyme with the given input words")
 	.argument("<WORD...>", "Words to find ryhmes for")
-	.option("-n --num <NUM>", "Specify the desired number of matches", 10)
-	.option("-d --dictionary <FILE>", "Specify the dictionary file path", defaultDictionaryPath)
-	.action(findRhymesAction);
+	.option("-n --num <NUM>", "Specify the desired number of matches", 5)
+	.option("-w --word-list <FILE>", "Specify the dictionary file path", defaultWordListPath)
+	.option("-s --no-shuffle", "Do not randomize the dictionary")
+	.action((args, options) => {
 
-function findRhymesAction(args, options) {
-	if (!fs.existsSync(options.dictionary)) {
-		throw new Error("The dictionary file does not exist");
-	}
+		// Initialize the word_list array
+		if (!fs.existsSync(options.wordList)) {
+			throw new Error("The dictionary file does not exist");
+		}
+		let word_list = fs.readFileSync(options.wordList, 'utf8').split('\n');
+		// Shuffle the dictionary if the shuffle option is not disabled
+		if (options.shuffle) {
+			shuffle(word_list);
+		}
 
-	const dictionary = fs.readFileSync(options.dictionary, 'utf8').split('\n');
+		// Initialize and populate the output grid
+		let columns = new Array();
+		let rows = Array.from({ "length": options.num }, () => []);
+		args.forEach((word) => {
+			columns.push(word);
+			let results = findRhymes(word, options.num, word_list);
+			results.forEach((word, index) => {
+				rows[index].push(word);
+			});
+		});
 
-	let outputs = new Array();
-	let columns = new Array();
-	let rows = new Array();
-
-	args.forEach((word) => {
-		columns.push(word);
-		outputs.push(findRhymes(word, options.num, dictionary));
+		// Print the output grid
+		consoleGrid({ "columns": columns, "rows": rows });
 	});
 
-	for (let i = 0; i < options.num; i++) {
-		let row = new Array();
-		for (let j = 0; j < args.length; j++) {
-			if (i >= outputs[j].length) {
-				throw new Error(`Output ${columns[j]}[${i}] does not exist`);
-			}
-			row.push(outputs[j][i]);
-		}
-		rows.push(row);
-	}
-
-	CG({ "columns": columns, "rows": rows });
-}
-
+// Implement the countSyllables algorithm inside a sub-command of haiku
 cli.command("count-syllables")
 	.description("Counts the number of syllables in a text")
 	.argument("<TEXT...>", "The texts to count syllables on")
-	.action(syllableCountAction)
+	.action((args) => {
 
-function syllableCountAction(args) {
-	let columns = [''];
-	for (let i = 0; i < args.length; i++) {
-		columns.push({ "name": `Text ${i+1}`, "align": "center" });
-	}
+		// Initialize the column headers
+		let columns = [''];
+		for (let i = 0; i < args.length; i++) {
+			columns.push({ "name": `Text ${i+1}`, "align": "center" });
+		}
 
-	let rows = [ ["Syllables:"] ];
-	args.forEach((text) => {
-		rows[0].push(syllableCount(text));
+		// Initialize and populate the output row
+		let rows = [ ["Syllables:"] ];
+		args.forEach((text) => {
+			rows[0].push(syllableCount(text));
+		});
+
+		// Only show the header if there is more than one argument
+		const options = { "headerVisible": args.length > 1 };
+		// Print the output grid
+		consoleGrid({ "columns": columns, "rows": rows, "options": options });
 	});
 
-	let options = { "headerVisible": args.length > 1 };
-
-	CG({ "columns": columns, "rows": rows, "options": options });
-}
-
+// Parse command line arguments
 cli.parse(process.argv);

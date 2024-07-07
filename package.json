@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Set of cli tools to aid in the creation of poems",
   "main": "src/cli.js",
-	"bin": "src/cli.js",
+  "bin": "src/cli.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/SharkAce/haiku.git"
@@ -20,6 +20,7 @@
   "homepage": "https://github.com/SharkAce/haiku#readme",
   "dependencies": {
     "commander": "^12.1.0",
-    "console-grid": "^2.2.2"
+    "console-grid": "^2.2.2",
+    "shuffle-array": "^1.0.1"
   }
 }
